@@ -1,0 +1,84 @@
+[Sat Jan 10 14:15:04 EST 1998]
+Version 1.01 --
+    Fixed bug which caused SIGSEGV during batch mode operation. This was due
+    to a source code mix up... sorry everyone. I guess I should be using RCS.
+
+[Sat Jun 12 13:27:06 EDT 1999]
+Version 1.02 --
+    Due to a heads-up from Terry Mackintosh:
+    Added the compile-time -DOLD_SONY_DIGICAM option so that jpgtn can
+    recognize data produced by a Sony MVC-FD7 digital camera. I don't know if 
+    other similar problems exist with other digicams. I do know that the 
+    MVC-FD71 does produce JFIF images. If you have information on other 
+    digicams which don't produce JFIF, please send me email with the make and 
+    model of the camera, and, if possible, some pictures taken with it. My 
+    email address is: jdmadea@cs.millersv.edu
+
+[Sun Jun 13 11:47:36 EDT 1999]
+Version 1.03 --
+    Due to a suggestion by Terry Mackintosh:
+    Added -H and -W options to allow resizing on one dimension letting the 
+    other one to float. Eg. Assuming foo.jpg is 480x640, the command:
+
+    bash$ jpgtn -H -s 48 foo.jpg
+
+    will produce a thumbnail that is 64x48, and the command:
+
+    bash$ jpgtn -W -s 48 foo.jpg
+
+    will produce a thumbnail that is 48x36. The default (no -H or -W option) 
+    results in the original behavior, i.e. the image is resized to fit in 
+    an NxN box where N is the argument to the -s switch. Basically, the default
+    just chooses -H if the height is the longer dimension and -W if the width
+    is.
+
+[Sun Jun 13 17:12:43 EDT 1999]
+Version 1.04 --
+    Changed MINSIZE (in jpgtn.h) to be 24 instead of 50. I often need small 
+    thumbnails for myself, and changed this long ago in my personal copy...
+    I just couldn't see any reason not to change it in the distribution.
+
+[Mon Jun 10 18:57:46 PDT 2002]
+    Wow. three years later and I finally get around to doing some much needed
+    maintenance. Talk about slacking. :-) Cleaned a lot up. Fixed the issue
+    with not being able to recognize some jpeg formats (hopefully for good) 
+    by removing the whole imagetype.c source file. It was left over from 
+    gtnpic which handled more than one image format. jpgtn just works with 
+    jpegs so it wasn't at all helpful anyway; even worse, it was buggy. This 
+    was the proper fix for that old problem with sony digicams. 
+   
+[Tue Jun 11 15:52:57 PDT 2002]
+    Fixed poor filename handling semantics. Now we ignore all path information
+    on input files when constructing output files. All output files either get
+    dumped into the current directory or the directory specified with the -d 
+    switch. Previously, something like "jpgtn ./foo.jpg" would result in an 
+    error because it tried to prepend the default prefix to the whole path as 
+    supplied and "./tn_./foo.jpg" would fail in the absence of a directory name     "tn_.". 
+    
+[Wed Jun 12 12:00:04 PDT 2002]
+Version 2.00 -- 
+    Changed minimum size to 2 pixels. I don't know what the use of that
+    would be but I didn't see the point of an arbitrary minimum of 24 pixels. 
+    I would have changed it to 1 pixel but doing so results in an error. I'll 
+    look into that later. Changed maximum size to 2048 pixels. Such an image 
+    size could hardly be called a thumbnail but, again, I didn't see the point 
+    of an arbitrary maximum of 256 pixels. Now I can use jpgtn to convert all
+    of my 2048x1536 images to 640x480. 
+
+[Thu Jun 13 19:39:32 PDT 2002]
+    Added -f flag which is now required in order to overwrite existing files. 
+    Changed the version flag to be -V instead of -v which is now used for...
+    Added -v flag which may be used more than once for increasing levels of 
+    verbosity. Removed warning that used to be written when no prefix or 
+    directory was supplied. Removed the prepending of "./" onto files when no 
+    directory was supplied. Kludged around rare 0 value for width or height. 
+
+[Fri Jun 14 17:01:58 PDT 2002]
+    Renamed usage() and version() to print_usage() and print_version() 
+    respectively. Cleaned up several non-source files including the man
+    page. Released to sunsite.unc.edu. 
+
+
+[Sun Jun 23 12:25:01 PDT 2002]
+    Fixed a bug whereby I was neglecting to initialize the variable holding 
+    the output filename.

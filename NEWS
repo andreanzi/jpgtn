@@ -1,0 +1,15 @@
+New in 2.06: 
+* Man page is now installed correctly.
+
+New in 2.05: 
+* No changes seen by the end user.
+
+New in 2.04:
+* No changes seen by the end user. 
+
+New in 2.03:
+* --with-libjpeg=PATH configure option. 
+
+New in 2.02:
+* GNU autoconf and automake driven build process
+* The directory structure for the package has changed.

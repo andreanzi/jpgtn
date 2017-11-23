@@ -1,0 +1,40 @@
+2003-02-15  Jeremy Madea  <jeremymadea@mindspring.com>
+
+	Version 2.06
+	* Fixed man page installation
+
+2003-01-09  Jeremy Madea  <jeremymadea@mindspring.com>
+
+	* Made version number changes to configure.ac and config.h
+
+
+2002-07-11  Jeremy Madea  <jeremymadea@mindspring.com>
+
+	Version 2.05
+	* Added replacement functions for strdup, malloc, and stat.
+
+
+2002-07-10  Jeremy Madea  <jeremymadea@mindspring.com>
+
+	* More changes to configure.ac file. 
+
+
+2002-07-09  Jeremy Madea  <jeremymadea@mindspring.com> 
+
+	Version 2.04
+	* Made several changes to configure.ac file. 
+	* Added includes for common.h
+	* Added portability code in new header file: common.h
+
+2002-06-29  Jeremy Madea  <jeremymadea@mindspring.com>
+
+	Version 2.03
+	* Wrote libjpeg.m4 and utility.m4 files.
+
+2002-06-27  Jeremy Madea  <jeremymadea@mindspring.com>
+
+	Version 2.02
+	* Moved CHANGES containing old changes to doc directory.
+	* Added NEWS, ChangleLog, INSTALL, TODO, and AUTHORS files.
+	* Wrote configure.ac and Makefile.am files. 
+	* Rearranged source tree. 

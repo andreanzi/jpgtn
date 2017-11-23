@@ -1,0 +1,73 @@
+                              jpgtn version 2
+                              ===============
+ 
+  What is jpgtn?
+  --------------
+ 
+  Jpgtn is a thumbnailer for JPEG images. 
+
+  Jpgtn is based on "tnpic" by Russell Marks and on "gtnpic" by Willie
+  Daniel. "tnpic" was originally distributed as a utility with Marks' "zgv"
+  program. "gtnpic" was an attempt to clean up and expand upon the original 
+  tnpic program and "maybe add some new features along the way." Jpgtn 
+  differs from both tnpic and gtnpic in purpose. It is not an indexer.
+
+  Jpgtn only thumbnails JPEG images. I have no plans to change it to accept 
+  other input formats. On and off I've thought about adding support for PNG 
+  output but I haven't had a real need for it myself so I haven't done it. 
+
+  Jpgtn can output thumbnails to files with names based on the names of the 
+  input files, or it can dump to stdout. The stdout support can be a useful
+  feature for CGI applications.
+
+  Jpgtn is based in part on the work of the Independent JPEG Group.
+
+
+
+  What do I need to use it?
+  -------------------------
+
+  In order to compile the source distribution you will need a C compiler. 
+
+  You will also need the Independent JPEG Group's JPEG library, libjpeg. 
+  It is a common library and it may already be installed on your system. 
+  If you don't have libjpeg, it is freely available and links to the source 
+  and documentation can be found on the Independent JPEG Group's page at 
+  http://www.ijg.org/. 
+
+
+
+  Compiling
+  ---------
+
+  Please see the INSTALL file!
+
+
+  Contact Info
+  ------------
+
+  Email: jpgtn@madea.net
+  Web:   http://madea.net/projects/jpgtn
+
+
+
+-----
+
+Copyright 2002-2012 Jeremy Madea
+
+This file is part of jpgtn.
+
+Jpgtn is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 2, or (at your option)
+any later version.
+
+Jpgtn is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with jpgtn; see the file COPYING.  If not, write to
+the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+Boston, MA 02111-1307, USA.

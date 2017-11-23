@@ -1,0 +1,31 @@
+It is a pleasure to announce that jpgtn 2.00 is now available to the public.
+
+I decided that jpgtn should get a rebirth because of another birth. . . that 
+of my beautiful daughter, Courtney Elizabeth, who was born on April 18, 2002!
+
+By early June, I had already collected several hundred digital photos of her
+but had not yet made most of them available to my family. I decided I should
+put up a website. I pulled out jpgtn-1.04 to make thumbnails for the website
+and found that an old bug prevented jpgtn from processing photos produced by
+my digicam. Right then and there I started hacking on the code for the first
+time in about three years. 
+
+Out of curiosity, I searched around on the web and found that there several 
+hundred references to this little utility out there. I was pleased to see it
+had gained a small following among the PHP crowd. There were also many sites 
+on which I found images named with the telltale "tn_" prefix that jpgtn uses
+as its default prefix. (I understand, of course, that by itself that doesn't 
+mean much, but figured it was safe to assume that at least some of them were
+created with jpgtn.)
+
+Inspired by the evidence that it is being used, I went ahead and cleaned it
+up even more. I fixed another bug or three and changed some of the behavior
+I didn't care for (such as removing the warning when no prefix or directory
+was supplied.) I have increased the maximum output image size and decreased
+the minimum because I felt they were both arbitrary. The interface has been
+changed somewhat during this update. Now the -v switch(es) are used to vary
+the verbosity level and the -V switch displays the version information. The
+-f switch is now required before jpgtn will overwrite existing output files
+and the -p switch behaves sanely when the filename arguments have paths. To
+get something close to the old behavior, use one -v switch and a -f switch. 
+

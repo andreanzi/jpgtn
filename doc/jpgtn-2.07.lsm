@@ -1,0 +1,15 @@
+Begin4
+Title: jpgtn
+Version:	2.07
+Entered-date:	2003-02-17 
+Description:	A JPEG thumbnail generator
+Keywords: 	jpg, jpeg, image, graphics, thumbnail, picture
+Author: 	jpgtn@madea.net (Jeremy Madea)
+Maintained-by: 	jpgtn@madea.net (Jeremy Madea)
+Primary-site:	http://jpgtn.sourceforge.net/
+jpgtn-2.07.tar.gz
+Alternate-site: http://ibiblio.org/pub/Linux/apps/graphics/misc/
+jpgtn-2.07.tar.gz
+Platforms:	POSIX with libjpeg (Tested on Solaris, OpenBSD, and Linux)
+Copying-policy: GPL
+End

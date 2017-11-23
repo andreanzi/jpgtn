@@ -1,0 +1,78 @@
+Preface
+=======
+
+  Jpgtn now uses a GNU autoconf/automake driven build process. This is new
+  and I've only tested it on Solaris (7 & 8) and Red Hat Linux 8.0. I want
+  to hear your feedback.  Please, send it to jpgtn@madea.net.
+
+  Thanks!
+    -j
+
+
+Basic Installation
+==================
+
+  Now that jpgtn comes with one of those ubiquitous "configure" scripts, 
+  the recommended way to build it is with the usual: 
+
+      ./configure
+      make
+      make install
+
+  The configure script takes the usual options for choosing installation 
+  directories and such. The only custom option is: --with-libjpeg=PATH to 
+  specify the location of libjpeg and its headers. If, for instance, you 
+  have libjpeg.a in /home/user/lib and jpeglib.h in /home/user/lib you 
+  would run the configure script like so: 
+
+      ./configure --with-libjpeg=/home/user
+
+  For more information about the other options that are supported by 
+  configure just type:
+
+      ./configure --help
+
+
+Setting the Environment 
+=======================
+
+  In some cases you might find it necessary to specify some odd options 
+  by hand.  You can often do this by setting some environment variables 
+  manually. As an example, consider a case where your jpeglib.h header 
+  file is in a really weird place. . . This might help if you are using 
+  a Bourne compatible shell: 
+
+      CPPFLAGS=-I/some/really/weird/place ./configure
+
+
+Changing the Build Directory
+============================
+
+  If you want, you can compile jpgtn in a build directory of your choice 
+  as long as your version of make supports the VPATH variable. GNU make 
+  will work.  To do this, you simply `cd` to the directory where you 
+  want to build the package and run the provided configure script from 
+  there. The object files and the executable will actually be created in 
+  a subdirectory called "src/" in the build directory you have chosen.
+
+
+-----
+
+Copyright 2002-2012 Jeremy Madea
+
+This file is part of jpgtn.
+
+Jpgtn is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 2, or (at your option)
+any later version.
+
+Jpgtn is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with jpgtn; see the file COPYING.  If not, write to
+the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+Boston, MA 02111-1307, USA.
