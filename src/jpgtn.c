@@ -32,12 +32,24 @@
 #include <sys/types.h> //included to open directory
 #include <dirent.h>
 
+typedef struct node {
+    char *path;
+    struct node * next;
+} node;
+
+node* head = NULL;
+node* cursor = NULL;
+
 
 /* Private */
 static void print_version(void);
 static void print_usage(char *);
 static int  file_exists(const char *);
 static char *output_file_name(const char *,int,const char *,int,const char *);
+static void get_files(char *);
+static void insert_into_array(char *);
+
+
 
 int main(int argc, char **argv)
 {
@@ -68,6 +80,7 @@ int main(int argc, char **argv)
     int src_directory = 0;
     int rows_per_image = 0;
     int columns_per_image = 0;
+
 
 
     /* Check command args */
@@ -176,16 +189,10 @@ int main(int argc, char **argv)
 
         //get images
         if(src_directory == 1) {
-            DIR           *d;
-            struct dirent *dir;
-            d = opendir(source_directory);
-            if (d) {
-                while ((dir = readdir(d)) != NULL)
-                {
-                  printf("%s\n", dir->d_name);
-                }
 
-                closedir(d);
+            get_files(source_directory);
+            for(node* i = head; i != NULL; i = i->next ){
+                printf("%s\n", i->path);
             }
         }
     }
@@ -359,4 +366,52 @@ static void print_version(void)
 {
     printf("jpgtn : Version %s\n",VERSION);
     printf("Copyright (c) 2002 Jeremy Madea <jeremymadea@mindspring.com>\n\n");
+}
+
+static void get_files(char *folder_name) {
+    DIR           *d;
+    struct dirent *dir;
+    //check if the path provided has a slash
+    if( folder_name[strlen(folder_name) - 1] != '/') {
+        strcat(folder_name, "/");
+    }
+    d = opendir(folder_name);
+    if (d) {
+        while ((dir = readdir(d)) != NULL)
+        {
+            char file_path[strlen(folder_name) +  strlen(dir->d_name) + 2];
+            if( strcmp(dir->d_name, ".") == 0 || strcmp(dir->d_name, "..") == 0 ) {
+                continue;
+            }
+            //build the path
+            strcpy( file_path, folder_name);
+            strcat( file_path, dir->d_name);
+            //check if file is a folder
+            if( opendir(file_path) ){
+                //call recursively this function
+                get_files(file_path);
+            } else {
+                insert_into_array(file_path);
+            }
+
+        }
+
+        closedir(d);
+    }
+
+}
+
+static void insert_into_array(char *str){
+    char *node_str = (char *) malloc(strlen(str) +1);
+    strcpy(node_str, str);
+    node* new = malloc(sizeof(node));
+    new->path = node_str;
+    new->next = NULL;
+    if( head == NULL){
+        head = new;
+        cursor = head;
+    } else{
+        cursor->next = new;
+        cursor = new;
+    }
 }
