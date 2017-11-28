@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2002-2012 Jeremy Madea <jpgtn@madea.net>
+    Copyright (C) 2002 Jeremy Madea <jeremymadea@mindspring.com>
 
     This file is part of jpgtn.
 
@@ -18,9 +18,9 @@
     Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
     Jpgtn is based on two programs: tnpic (distributed with zgv) and gtnpic.
-    The original "gtnpic" program was Copyright (C) 1997      Willie Daniel. 
+    The original "gtnpic" program was Copyright (C) 1997      Willie Daniel.
     The original "tnpic"  program was Copyright (C) 1993-1996 Russell Marks.
-    Both tnpic and gtnpic were distributed under the GNU Public License. 
+    Both tnpic and gtnpic were distributed under the GNU Public License.
 */
 
 #if HAVE_CONFIG_H
@@ -29,6 +29,8 @@
 
 #include "common.h"
 #include "jpgtn.h"
+#include <sys/types.h> //included to open directory
+#include <dirent.h>
 
 
 /* Private */
@@ -59,6 +61,14 @@ int main(int argc, char **argv)
     char *opt_prefix    = NULL;            /* Output filename prefix      */
     char *imgfile       = NULL;            /* Output filename             */
 
+    int grid_mode = 0;
+    char *source_directory = NULL;
+    int grid_width = 0;
+    int grid_height = 0;
+    int src_directory = 0;
+    int rows_per_image = 0;
+    int columns_per_image = 0;
+
 
     /* Check command args */
     if (argc < 2) {
@@ -66,7 +76,7 @@ int main(int argc, char **argv)
         exit(EXIT_FAILURE);
     }
 
-    while (-1 != (x = getopt(argc,argv,"Vh?SHWfvs:q:d:p:"))) {
+    while (-1 != (x = getopt(argc,argv,"Vh?SHGWfvs:q:d:p:R:C:J:K:D:"))) {
         switch(x) {
             case 'V':
                 print_version();
@@ -102,7 +112,7 @@ int main(int argc, char **argv)
             case 'H':
                 opt_rsz_dim = RSZ_HEIGHT;
                 break;
-            case 'W':
+            case 'w':
                 opt_rsz_dim = RSZ_WIDTH;
                 break;
             case 'd':
@@ -113,6 +123,26 @@ int main(int argc, char **argv)
                 opt_prefix = optarg;
                 opt_flag_prefix = 1;
                 break;
+            case 'D':
+                source_directory = optarg;
+                src_directory = 1;
+                break;
+            case 'R':
+                sscanf(optarg,"%i",&rows_per_image);
+                break;
+            case 'C':
+                sscanf(optarg,"%i",&columns_per_image);
+                break;
+            case 'J':
+                sscanf(optarg,"%i",&grid_height);
+                break;
+            case 'K':
+                sscanf(optarg,"%i",&grid_width);
+                break;
+            case 'G':
+                grid_mode = 1;
+                break;
+
             case '?':
                 print_usage(argv[0]);
                 exit(EXIT_FAILURE);
@@ -125,37 +155,57 @@ int main(int argc, char **argv)
         }
 
     if (argc - optind < 1) {
-        print_usage(argv[0]);
-        exit(EXIT_FAILURE);
+        //print_usage(argv[0]);
+        //exit(EXIT_FAILURE);
     }
 
     if ((!opt_flag_stdout) && (!opt_flag_directory) && (!opt_flag_prefix)) {
         opt_flag_prefix = 1;
         opt_prefix = "tn_";
     }
-            
+
     if (!opt_flag_quality) opt_quality = 70;
 
     if (opt_flag_verbose > 2) {
         printf("quality: %d\n",opt_quality);
     }
 
+    if(grid_mode == 1) {
+        //grid mode enabled
+        //TODO: check parameters existence
+
+        //get images
+        if(src_directory == 1) {
+            DIR           *d;
+            struct dirent *dir;
+            d = opendir(source_directory);
+            if (d) {
+                while ((dir = readdir(d)) != NULL)
+                {
+                  printf("%s\n", dir->d_name);
+                }
+
+                closedir(d);
+            }
+        }
+    }
+
 
     /* The big loop */
     for (f = optind; f < argc; f++) {
 
-        if (!opt_flag_stdout) { 
+        if (!opt_flag_stdout) {
             imgfile = output_file_name(argv[f],
                                        opt_flag_directory, opt_directory,
                                        opt_flag_prefix, opt_prefix);
             if (imgfile != NULL) {
-                if (!opt_flag_force && file_exists(imgfile)) { 
-                    fprintf(stderr,"Skipping %s: File exists\n", imgfile); 
+                if (!opt_flag_force && file_exists(imgfile)) {
+                    fprintf(stderr,"Skipping %s: File exists\n", imgfile);
                     continue;
-                } 
-            } else { 
-                fprintf(stderr, "Could not allocate space for filename!\n"); 
-                exit(EXIT_FAILURE); 
+                }
+            } else {
+                fprintf(stderr, "Could not allocate space for filename!\n");
+                exit(EXIT_FAILURE);
             }
         }
 
@@ -183,12 +233,12 @@ int main(int argc, char **argv)
         if ((xsiz < MINSIZE) && (ysiz < MINSIZE)) {
              fprintf(stderr, "thumbnail too small...\n");
         }
-    
+
         free(palrgb);
         free(bigimage);
-        
-        if (! opt_flag_stdout) { 
-            if (opt_flag_verbose) { 
+
+        if (! opt_flag_stdout) {
+            if (opt_flag_verbose) {
                 printf("%s",imgfile);
                 if (opt_flag_verbose > 1) printf(" %dx%d",xsiz,ysiz);
                 printf("\n");
@@ -198,7 +248,7 @@ int main(int argc, char **argv)
             imgfile = NULL;
             free(outimage);
 
-        } else { 
+        } else {
             write_JPEG_file(NULL,xsiz,ysiz,opt_quality);
             exit(EXIT_SUCCESS);
         }
@@ -207,9 +257,9 @@ int main(int argc, char **argv)
     exit (EXIT_SUCCESS);
 }
 
-static int file_exists(const char *path) { 
+static int file_exists(const char *path) {
     struct stat buf;
- 
+
     /* Crude check. If we can stat it successfully, we assume it exists. */
     /* Otherwise we return zero, meaning that this function can't tell. */
 
@@ -220,8 +270,8 @@ static int file_exists(const char *path) {
     }
 }
 
-static char *output_file_name(const char *infile, 
-                              int dflag, const char *dir, 
+static char *output_file_name(const char *infile,
+                              int dflag, const char *dir,
                               int pflag, const char *pre)
 {
     int   len       = 0;
@@ -231,31 +281,31 @@ static char *output_file_name(const char *infile,
 
     /* Make a copy of the input file name. */
     infiledup = strdup(infile);
-    if (! infiledup) { 
+    if (! infiledup) {
         return(NULL);
     }
 
     /* Ignore path information at the beginning of the filename. */
     ifn = strrchr(infiledup,'/');
-    if (!ifn) { 
+    if (!ifn) {
         ifn = infiledup;
-    } else { 
+    } else {
         ifn++;
     }
 
-    /* Estimate max length we'll need; add two for "./" and one for null. */ 
-    len = strlen(ifn) + 3;               
+    /* Estimate max length we'll need; add two for "./" and one for null. */
+    len = strlen(ifn) + 3;
     if (dir) len += strlen(dir);
     if (pre) len += strlen(pre);
-            
+
     /* Reserve space for it... */
     name = (char *)malloc(len);
 
-    if (name == NULL) { 
-        return NULL; 
-    } 
+    if (name == NULL) {
+        return NULL;
+    }
 
-    *name = '\0'; 
+    *name = '\0';
 
     /* Construct the output file name. */
     if (dflag) {
@@ -288,7 +338,7 @@ static void print_usage(char *prog)
     printf("  -d directory  Set the output directory.\n");
     printf("  -f            Force overwrite of existing output files.\n");
     printf("  -h            Display this help message and exit.\n");
-    printf("  -p prefix     Set the output filename prefix.\n");   
+    printf("  -p prefix     Set the output filename prefix.\n");
     printf("  -q quality    Set the output quality.\n");
     printf("  -s size       Set the size of the longest output dimension. ");
     printf(" (See -H and -V)\n");
@@ -296,6 +346,11 @@ static void print_usage(char *prog)
     printf("  -H            Make the -s switch refer to the output height.\n");
     printf("  -S            Process only one file and output to stdout.\n");
     printf("  -W            Make the -s switch refer to the output width.\n");
+    printf("  -g            Set the grid mode.\n");
+    printf("  -gD directory Set the source directory.\n");
+    printf("  -gn           Set the number of thumbnails per image.\n");
+    printf("  -gH           Set the height of the grid image.\n");
+    printf("  -gW           Set the width of the grid image.\n");
     printf("  -V            Display version and exit.\n");
     printf("\nSee jpgtn(1) for more details.\n\n");
 }
@@ -303,5 +358,5 @@ static void print_usage(char *prog)
 static void print_version(void)
 {
     printf("jpgtn : Version %s\n",VERSION);
-    printf("Copyright (c) 2002-2012 Jeremy Madea <jpgtn@madea.net>\n\n");
+    printf("Copyright (c) 2002 Jeremy Madea <jeremymadea@mindspring.com>\n\n");
 }
