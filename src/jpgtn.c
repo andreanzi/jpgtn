@@ -167,11 +167,6 @@ int main(int argc, char **argv)
             }
         }
 
-    if (argc - optind < 1) {
-        //print_usage(argv[0]);
-        //exit(EXIT_FAILURE);
-    }
-
     if ((!opt_flag_stdout) && (!opt_flag_directory) && (!opt_flag_prefix)) {
         opt_flag_prefix = 1;
         opt_prefix = "tn_";
@@ -195,71 +190,80 @@ int main(int argc, char **argv)
                 printf("%s\n", i->path);
             }
         }
-    }
 
 
-    /* The big loop */
-    for (f = optind; f < argc; f++) {
 
-        if (!opt_flag_stdout) {
-            imgfile = output_file_name(argv[f],
-                                       opt_flag_directory, opt_directory,
-                                       opt_flag_prefix, opt_prefix);
-            if (imgfile != NULL) {
-                if (!opt_flag_force && file_exists(imgfile)) {
-                    fprintf(stderr,"Skipping %s: File exists\n", imgfile);
-                    continue;
+    } else {
+        if (argc - optind < 1) {
+            print_usage(argv[0]);
+            exit(EXIT_FAILURE);
+        }
+        /* The big loop */
+        for (f = optind; f < argc; f++) {
+
+            if (!opt_flag_stdout) {
+                imgfile = output_file_name(argv[f],
+                                           opt_flag_directory, opt_directory,
+                                           opt_flag_prefix, opt_prefix);
+                if (imgfile != NULL) {
+                    if (!opt_flag_force && file_exists(imgfile)) {
+                        fprintf(stderr,"Skipping %s: File exists\n", imgfile);
+                        continue;
+                    }
+                } else {
+                    fprintf(stderr, "Could not allocate space for filename!\n");
+                    exit(EXIT_FAILURE);
                 }
-            } else {
-                fprintf(stderr, "Could not allocate space for filename!\n");
+            }
+
+            /* Get a pointer to the big image or NULL on error */
+            bigimage=read_JPEG_file(argv[f], &palette);
+            if (NULL == bigimage) {
+                fprintf(stderr, "read_JPEG_file: Error\n");
+                if(outimage) free(outimage);
                 exit(EXIT_FAILURE);
             }
-        }
+            palrgb=palette;
 
-        /* Get a pointer to the big image or NULL on error */
-        bigimage=read_JPEG_file(argv[f], &palette);
-        if (NULL == bigimage) {
-            fprintf(stderr, "read_JPEG_file: Error\n");
-            if(outimage) free(outimage);
-            exit(EXIT_FAILURE);
-        }
-        palrgb=palette;
+            /* Returns a pointer to the resized image or NULL on error */
+            outimage = resizepic(bigimage, palrgb, palrgb+256, palrgb+512,
+                                 width, height, size, opt_rsz_dim);
+            xsiz = out_wide;
+            ysiz = out_high;
 
-        /* Returns a pointer to the resized image or NULL on error */
-        outimage = resizepic(bigimage, palrgb, palrgb+256, palrgb+512,
-                             width, height, size, opt_rsz_dim);
-        xsiz = out_wide;
-        ysiz = out_high;
-
-        if(outimage == NULL) {
-            fprintf(stderr,"outimage = NULL ???\n");
-            if(bigimage) free(bigimage);
-            exit(EXIT_FAILURE);
-        }
-
-        if ((xsiz < MINSIZE) && (ysiz < MINSIZE)) {
-             fprintf(stderr, "thumbnail too small...\n");
-        }
-
-        free(palrgb);
-        free(bigimage);
-
-        if (! opt_flag_stdout) {
-            if (opt_flag_verbose) {
-                printf("%s",imgfile);
-                if (opt_flag_verbose > 1) printf(" %dx%d",xsiz,ysiz);
-                printf("\n");
+            if(outimage == NULL) {
+                fprintf(stderr,"outimage = NULL ???\n");
+                if(bigimage) free(bigimage);
+                exit(EXIT_FAILURE);
             }
-            write_JPEG_file(imgfile,xsiz,ysiz,opt_quality);
-            free(imgfile);
-            imgfile = NULL;
-            free(outimage);
 
-        } else {
-            write_JPEG_file(NULL,xsiz,ysiz,opt_quality);
-            exit(EXIT_SUCCESS);
+            if ((xsiz < MINSIZE) && (ysiz < MINSIZE)) {
+                 fprintf(stderr, "thumbnail too small...\n");
+            }
+
+            free(palrgb);
+            free(bigimage);
+
+            if (! opt_flag_stdout) {
+                if (opt_flag_verbose) {
+                    printf("%s",imgfile);
+                    if (opt_flag_verbose > 1) printf(" %dx%d",xsiz,ysiz);
+                    printf("\n");
+                }
+                write_JPEG_file(imgfile,xsiz,ysiz,opt_quality);
+                free(imgfile);
+                imgfile = NULL;
+                free(outimage);
+
+            } else {
+                write_JPEG_file(NULL,xsiz,ysiz,opt_quality);
+                exit(EXIT_SUCCESS);
+            }
         }
     }
+
+
+
 
     exit (EXIT_SUCCESS);
 }
@@ -353,11 +357,12 @@ static void print_usage(char *prog)
     printf("  -H            Make the -s switch refer to the output height.\n");
     printf("  -S            Process only one file and output to stdout.\n");
     printf("  -W            Make the -s switch refer to the output width.\n");
-    printf("  -g            Set the grid mode.\n");
-    printf("  -gD directory Set the source directory.\n");
-    printf("  -gn           Set the number of thumbnails per image.\n");
-    printf("  -gH           Set the height of the grid image.\n");
-    printf("  -gW           Set the width of the grid image.\n");
+    printf("  -G            Set the grid mode.\n");
+    printf("  -D directory  Set the source directory.\n");
+    printf("  -R            Set the number of rows in the grid.\n");
+    printf("  -C            Set the number of columns in the grid.\n");
+    printf("  -J            Set the height of the grid image.\n");
+    printf("  -K            Set the width of the grid image.\n");
     printf("  -V            Display version and exit.\n");
     printf("\nSee jpgtn(1) for more details.\n\n");
 }
