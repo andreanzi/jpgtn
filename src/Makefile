@@ -49,7 +49,7 @@ CONFIG_CLEAN_VPATH_FILES =
 am__installdirs = "$(DESTDIR)$(bindir)"
 PROGRAMS = $(bin_PROGRAMS)
 am_jpgtn_OBJECTS = jpgtn.$(OBJEXT) readjpeg.$(OBJEXT) \
-	writejpeg.$(OBJEXT) resizepic.$(OBJEXT)
+	writejpeg.$(OBJEXT) resizepic.$(OBJEXT) cutimage.$(OBJEXT)
 jpgtn_OBJECTS = $(am_jpgtn_OBJECTS)
 jpgtn_LDADD = $(LDADD)
 DEFAULT_INCLUDES = -I.
@@ -104,12 +104,12 @@ am__relativize = \
     dir1=`echo "$$dir1" | sed -e "$$sed_rest"`; \
   done; \
   reldir="$$dir2"
-ACLOCAL = ${SHELL} /Users/Marco/Documents/UniversityProjects/jpgtn/cfg/missing --run aclocal-1.11
-AMTAR = ${SHELL} /Users/Marco/Documents/UniversityProjects/jpgtn/cfg/missing --run tar
-AUTOCONF = ${SHELL} /Users/Marco/Documents/UniversityProjects/jpgtn/cfg/missing --run autoconf
-AUTOHEADER = ${SHELL} /Users/Marco/Documents/UniversityProjects/jpgtn/cfg/missing --run autoheader
-AUTOMAKE = ${SHELL} /Users/Marco/Documents/UniversityProjects/jpgtn/cfg/missing --run automake-1.11
-AWK = awk
+ACLOCAL = ${SHELL} /home/andrea/Documenti/jpgtn/cfg/missing --run aclocal-1.11
+AMTAR = ${SHELL} /home/andrea/Documenti/jpgtn/cfg/missing --run tar
+AUTOCONF = ${SHELL} /home/andrea/Documenti/jpgtn/cfg/missing --run autoconf
+AUTOHEADER = ${SHELL} /home/andrea/Documenti/jpgtn/cfg/missing --run autoheader
+AUTOMAKE = ${SHELL} /home/andrea/Documenti/jpgtn/cfg/missing --run automake-1.11
+AWK = gawk
 CC = gcc
 CCDEPMODE = depmode=gcc3
 CFLAGS = -g -O2
@@ -118,23 +118,23 @@ CPPFLAGS =
 CYGPATH_W = echo
 DEFS = -DHAVE_CONFIG_H
 DEPDIR = .deps
-ECHO_C = \c
-ECHO_N = 
+ECHO_C = 
+ECHO_N = -n
 ECHO_T = 
-EGREP = /usr/bin/grep -E
+EGREP = /bin/grep -E
 EXEEXT = 
-GREP = /usr/bin/grep
+GREP = /bin/grep
 INSTALL = /usr/bin/install -c
 INSTALL_DATA = ${INSTALL} -m 644
 INSTALL_PROGRAM = ${INSTALL}
 INSTALL_SCRIPT = ${INSTALL}
 INSTALL_STRIP_PROGRAM = $(install_sh) -c -s
 LDFLAGS = 
-LIBOBJS =  ${LIBOBJDIR}lstat$U.o
+LIBOBJS = 
 LIBS = -ljpeg 
-LTLIBOBJS =  ${LIBOBJDIR}lstat$U.lo
-MAKEINFO = ${SHELL} /Users/Marco/Documents/UniversityProjects/jpgtn/cfg/missing --run makeinfo
-MKDIR_P = ../cfg/install-sh -c -d
+LTLIBOBJS = 
+MAKEINFO = ${SHELL} /home/andrea/Documenti/jpgtn/cfg/missing --run makeinfo
+MKDIR_P = /bin/mkdir -p
 OBJEXT = o
 PACKAGE = jpgtn
 PACKAGE_BUGREPORT = jpgtn@madea.net
@@ -145,13 +145,13 @@ PACKAGE_URL =
 PACKAGE_VERSION = 2.07
 PATH_SEPARATOR = :
 SET_MAKE = 
-SHELL = /bin/sh
+SHELL = /bin/bash
 STRIP = 
 VERSION = 2.07
-abs_builddir = /Users/Marco/Documents/UniversityProjects/jpgtn/src
-abs_srcdir = /Users/Marco/Documents/UniversityProjects/jpgtn/src
-abs_top_builddir = /Users/Marco/Documents/UniversityProjects/jpgtn
-abs_top_srcdir = /Users/Marco/Documents/UniversityProjects/jpgtn
+abs_builddir = /home/andrea/Documenti/jpgtn/src
+abs_srcdir = /home/andrea/Documenti/jpgtn/src
+abs_top_builddir = /home/andrea/Documenti/jpgtn
+abs_top_srcdir = /home/andrea/Documenti/jpgtn
 ac_aux_dir = cfg
 ac_ct_CC = gcc
 am__include = include
@@ -171,13 +171,13 @@ host_alias =
 htmldir = ${docdir}
 includedir = ${prefix}/include
 infodir = ${datarootdir}/info
-install_sh = ${SHELL} /Users/Marco/Documents/UniversityProjects/jpgtn/cfg/install-sh
+install_sh = ${SHELL} /home/andrea/Documenti/jpgtn/cfg/install-sh
 libdir = ${exec_prefix}/lib
 libexecdir = ${exec_prefix}/libexec
 localedir = ${datarootdir}/locale
 localstatedir = ${prefix}/var
 mandir = ${datarootdir}/man
-mkdir_p = $(top_builddir)/cfg/install-sh -c -d
+mkdir_p = /bin/mkdir -p
 oldincludedir = /usr/include
 pdfdir = ${docdir}
 prefix = /usr/local
@@ -192,9 +192,9 @@ top_build_prefix = ../
 top_builddir = ..
 top_srcdir = ..
 MAINTAINERCLEANFILES = Makefile.in
-INCLUDES = -I$(top_builddir) -I$(top_srcdir) 
+INCLUDES = -I$(top_builddir) -I$(top_srcdir)
 noinst_HEADERS = jpgtn.h common.h
-jpgtn_SOURCES = jpgtn.c readjpeg.c writejpeg.c resizepic.c
+jpgtn_SOURCES = jpgtn.c readjpeg.c writejpeg.c resizepic.c cutimage.c
 SUBDIRS = replace
 all: config.h
 	$(MAKE) $(AM_MAKEFLAGS) all-recursive
@@ -241,7 +241,7 @@ config.h: stamp-h1
 stamp-h1: $(srcdir)/config-h.in $(top_builddir)/config.status
 	@rm -f stamp-h1
 	cd $(top_builddir) && $(SHELL) ./config.status src/config.h
-$(srcdir)/config-h.in:  $(am__configure_deps) 
+$(srcdir)/config-h.in:  $(am__configure_deps)
 	($(am__cd) $(top_srcdir) && $(AUTOHEADER))
 	rm -f stamp-h1
 	touch $@
@@ -285,7 +285,7 @@ uninstall-binPROGRAMS:
 
 clean-binPROGRAMS:
 	-test -z "$(bin_PROGRAMS)" || rm -f $(bin_PROGRAMS)
-jpgtn$(EXEEXT): $(jpgtn_OBJECTS) $(jpgtn_DEPENDENCIES) 
+jpgtn$(EXEEXT): $(jpgtn_OBJECTS) $(jpgtn_DEPENDENCIES)
 	@rm -f jpgtn$(EXEEXT)
 	$(LINK) $(jpgtn_OBJECTS) $(jpgtn_LDADD) $(LIBS)
 

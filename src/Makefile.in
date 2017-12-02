@@ -49,7 +49,7 @@ CONFIG_CLEAN_VPATH_FILES =
 am__installdirs = "$(DESTDIR)$(bindir)"
 PROGRAMS = $(bin_PROGRAMS)
 am_jpgtn_OBJECTS = jpgtn.$(OBJEXT) readjpeg.$(OBJEXT) \
-	writejpeg.$(OBJEXT) resizepic.$(OBJEXT)
+	writejpeg.$(OBJEXT) resizepic.$(OBJEXT) cutimage.$(OBJEXT)
 jpgtn_OBJECTS = $(am_jpgtn_OBJECTS)
 jpgtn_LDADD = $(LDADD)
 DEFAULT_INCLUDES = -I.@am__isrc@
@@ -192,9 +192,9 @@ top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 MAINTAINERCLEANFILES = Makefile.in
-INCLUDES = -I$(top_builddir) -I$(top_srcdir) 
+INCLUDES = -I$(top_builddir) -I$(top_srcdir)
 noinst_HEADERS = jpgtn.h common.h
-jpgtn_SOURCES = jpgtn.c readjpeg.c writejpeg.c resizepic.c
+jpgtn_SOURCES = jpgtn.c readjpeg.c writejpeg.c resizepic.c cutimage.c
 SUBDIRS = replace
 all: config.h
 	$(MAKE) $(AM_MAKEFLAGS) all-recursive
@@ -241,7 +241,7 @@ config.h: stamp-h1
 stamp-h1: $(srcdir)/config-h.in $(top_builddir)/config.status
 	@rm -f stamp-h1
 	cd $(top_builddir) && $(SHELL) ./config.status src/config.h
-$(srcdir)/config-h.in:  $(am__configure_deps) 
+$(srcdir)/config-h.in:  $(am__configure_deps)
 	($(am__cd) $(top_srcdir) && $(AUTOHEADER))
 	rm -f stamp-h1
 	touch $@
@@ -285,7 +285,7 @@ uninstall-binPROGRAMS:
 
 clean-binPROGRAMS:
 	-test -z "$(bin_PROGRAMS)" || rm -f $(bin_PROGRAMS)
-jpgtn$(EXEEXT): $(jpgtn_OBJECTS) $(jpgtn_DEPENDENCIES) 
+jpgtn$(EXEEXT): $(jpgtn_OBJECTS) $(jpgtn_DEPENDENCIES)
 	@rm -f jpgtn$(EXEEXT)
 	$(LINK) $(jpgtn_OBJECTS) $(jpgtn_LDADD) $(LIBS)
 

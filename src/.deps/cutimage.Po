@@ -1,4 +1,4 @@
-resizepic.o: resizepic.c /usr/include/stdc-predef.h config.h common.h \
+cutimage.o: cutimage.c /usr/include/stdc-predef.h config.h common.h \
  config.h /usr/include/stdio.h /usr/include/features.h \
  /usr/include/x86_64-linux-gnu/sys/cdefs.h \
  /usr/include/x86_64-linux-gnu/bits/wordsize.h \

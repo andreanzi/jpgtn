@@ -34,6 +34,12 @@
 
 typedef struct node {
     char *path;
+    unsigned char *raw_image;
+    int height;
+    int width;
+    float scale_factor;
+    int resize_dim;
+    int cut_dim;
     struct node * next;
 } node;
 
@@ -184,11 +190,59 @@ int main(int argc, char **argv)
 
         //get images
         if(src_directory == 1) {
-
             get_files(source_directory);
+            int TH = grid_height / rows_per_image;
+            int TW = grid_width / columns_per_image;
             for(node* i = head; i != NULL; i = i->next ){
                 printf("%s\n", i->path);
+                //unsigned char *temp = read_JPEG_file(i->path, &palette);
+                i->raw_image = read_JPEG_file(i->path, &palette);
+                i->width = width;
+                i->height = height;
+
+                float scaleH = (float)height / (float)TH;
+                float scaleW = (float)width / (float)TW;
+                if( scaleH < scaleW ){
+                    i->scale_factor = scaleH;
+                    i->resize_dim = RSZ_HEIGHT;
+                    i->cut_dim = RSZ_WIDTH;
+                    int cut_size = (((i->width / i->scale_factor) - TW) / 2) * i->scale_factor;
+                    i->raw_image = cutimage(i->raw_image, i->width, i->height, RSZ_WIDTH, cut_size);
+                    i->width = i->width - cut_size * 2;
+                    outimage = resizepic(i->raw_image, palette, palette+256, palette+512, i->width, i->height, grid_height, RSZ_HEIGHT);
+
+                } else {
+                    i->scale_factor = scaleW;
+                    i->resize_dim = RSZ_WIDTH;
+                    i->cut_dim = RSZ_HEIGHT;
+                    int cut_size = (((i->height / i->scale_factor) - TH) / 2) * i->scale_factor;
+                    i->raw_image = cutimage(i->raw_image, i->width, i->height, RSZ_HEIGHT, cut_size);
+                    i->height = i->height - cut_size * 2;
+                    outimage = resizepic(i->raw_image, palette, palette+256, palette+512, i->width, i->height, grid_width, RSZ_WIDTH);
+                }
+
+                //i->raw_image = cutimage(i->raw_image, i->width, i->height, RSZ_WIDTH, 50);
+
+                write_JPEG_file("./prova1.jpeg", grid_width, grid_height, 100);
+                break;
+                //i->raw_image = resizepic(temp, palette, palette+256, palette+512, i->width, i->height, (i->resize_dim == RSZ_HEIGHT) ? TH : TW, i->resize_dim);
             }
+            // unsigned char *grid_image = (unsigned char*) calloc( width*height + width*height, 1 );
+            // memcpy(grid_image, head->raw_image, width*height);
+            // memcpy(&grid_image[width*height], head->next->raw_image, width*height);
+            //
+            // outimage = resizepic(grid_image, palette, palette+256, palette+512, grid_width, grid_height, grid_width, RSZ_WIDTH);
+            // //outimage = grid_image;
+            // write_JPEG_file("./prova1.jpeg", grid_width, grid_height, 100);
+
+            //unsigned char *grid_image = (unsigned char*) calloc( 1, height*(width - 100) );
+            //memcpy(grid_image, head->raw_image, height*(width - 100));
+            //memcpy(&grid_image[width*height], head->next->raw_image, width*height);
+
+            //outimage = resizepic(grid_image, palette, palette+256, palette+512, grid_width - 100, grid_height, grid_width, RSZ_WIDTH);
+            //outimage = grid_image;
+            //write_JPEG_file("./prova1.jpeg", grid_width - 100, grid_height, 100);
+
         }
 
 
@@ -412,6 +466,7 @@ static void insert_into_array(char *str){
     node* new = malloc(sizeof(node));
     new->path = node_str;
     new->next = NULL;
+    new->raw_image = NULL;
     if( head == NULL){
         head = new;
         cursor = head;

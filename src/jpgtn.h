@@ -18,9 +18,9 @@
     Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
     Jpgtn is based on two programs: tnpic (distributed with zgv) and gtnpic.
-    The original "gtnpic" program was Copyright (C) 1997      Willie Daniel. 
+    The original "gtnpic" program was Copyright (C) 1997      Willie Daniel.
     The original "tnpic"  program was Copyright (C) 1993-1996 Russell Marks.
-    Both tnpic and gtnpic were distributed under the GNU Public License. 
+    Both tnpic and gtnpic were distributed under the GNU Public License.
 */
 
 #ifndef JPGTN_H
@@ -46,11 +46,11 @@ long           out_high;                    /* Height of thumbnail image   */
 
 
 /* resizepic.c */
-extern unsigned char *resizepic(unsigned char *thisimage, 
+extern unsigned char *resizepic(unsigned char *thisimage,
                                 unsigned char *palr,
-                                unsigned char *palg, 
+                                unsigned char *palg,
                                 unsigned char *palb,
-                                int            currwidth, 
+                                int            currwidth,
                                 int            currheight,
                                 int            maxsize,
                                 int            which_dim);
@@ -59,9 +59,11 @@ extern unsigned char *resizepic(unsigned char *thisimage,
 extern unsigned char *read_JPEG_file(char *filename, unsigned char **palette);
 
 /* writejpeg.c  */
-extern void write_JPEG_file(char *filename, 
-                            int   outwidth,  
-                            int   outheight, 
+extern void write_JPEG_file(char *filename,
+                            int   outwidth,
+                            int   outheight,
                             int   quality);
+/* cutimage.c */
+extern unsigned char *cutimage( char* image, int currwidth, int currheight, int which_dim, int size);
 
 #endif /* !JPGTN_H */
