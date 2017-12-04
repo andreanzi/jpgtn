@@ -1,4 +1,4 @@
-writejpeg.o: writejpeg.c config.h common.h /usr/include/stdio.h \
+creategrid.o: creategrid.c config.h common.h /usr/include/stdio.h \
   /usr/include/sys/cdefs.h /usr/include/sys/_symbol_aliasing.h \
   /usr/include/sys/_posix_availability.h /usr/include/Availability.h \
   /usr/include/AvailabilityInternal.h /usr/include/_types.h \

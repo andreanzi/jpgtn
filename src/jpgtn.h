@@ -44,6 +44,16 @@ int            background;                  /* Index's background color    */
 long           out_wide;                    /* Width of thumbnail image    */
 long           out_high;                    /* Height of thumbnail image   */
 
+typedef struct node {
+    char *path;
+    unsigned char *raw_image;
+    int height;
+    int width;
+    float scale_factor;
+    int resize_dim;
+    int cut_dim;
+    struct node * next;
+} node;
 
 /* resizepic.c */
 extern unsigned char *resizepic(unsigned char *thisimage,
@@ -65,5 +75,8 @@ extern void write_JPEG_file(char *filename,
                             int   quality);
 /* cutimage.c */
 extern unsigned char *cutimage( char* image, int currwidth, int currheight, int which_dim, int size);
+
+/* creategrid.c */
+extern unsigned char *creategrid(node *head, int xsize, int ysize, int xelements, int yelements);
 
 #endif /* !JPGTN_H */

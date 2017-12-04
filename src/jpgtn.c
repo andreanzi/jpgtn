@@ -32,17 +32,6 @@
 #include <sys/types.h> //included to open directory
 #include <dirent.h>
 
-typedef struct node {
-    char *path;
-    unsigned char *raw_image;
-    int height;
-    int width;
-    float scale_factor;
-    int resize_dim;
-    int cut_dim;
-    struct node * next;
-} node;
-
 node* head = NULL;
 node* cursor = NULL;
 
@@ -209,8 +198,7 @@ int main(int argc, char **argv)
                     int cut_size = (((i->width / i->scale_factor) - TW) / 2) * i->scale_factor;
                     i->raw_image = cutimage(i->raw_image, i->width, i->height, RSZ_WIDTH, cut_size);
                     i->width = i->width - cut_size * 2;
-                    outimage = resizepic(i->raw_image, palette, palette+256, palette+512, i->width, i->height, grid_height, RSZ_HEIGHT);
-
+                    i->raw_image = resizepic(i->raw_image, palette, palette+256, palette+512, i->width, i->height, grid_height, RSZ_HEIGHT);
                 } else {
                     i->scale_factor = scaleW;
                     i->resize_dim = RSZ_WIDTH;
@@ -218,15 +206,26 @@ int main(int argc, char **argv)
                     int cut_size = (((i->height / i->scale_factor) - TH) / 2) * i->scale_factor;
                     i->raw_image = cutimage(i->raw_image, i->width, i->height, RSZ_HEIGHT, cut_size);
                     i->height = i->height - cut_size * 2;
-                    outimage = resizepic(i->raw_image, palette, palette+256, palette+512, i->width, i->height, grid_width, RSZ_WIDTH);
+                    i->raw_image = resizepic(i->raw_image, palette, palette+256, palette+512, i->width, i->height, grid_width, RSZ_WIDTH);
                 }
+                i->width = out_wide;
+                i->height = out_high;
+                printf("\n%d\n", i->width);
+                printf("\n%d\n", i->height);
 
                 //i->raw_image = cutimage(i->raw_image, i->width, i->height, RSZ_WIDTH, 50);
 
+                /*
                 write_JPEG_file("./prova1.jpeg", grid_width, grid_height, 100);
                 break;
+                */
+
                 //i->raw_image = resizepic(temp, palette, palette+256, palette+512, i->width, i->height, (i->resize_dim == RSZ_HEIGHT) ? TH : TW, i->resize_dim);
             }
+
+            unsigned char *grid_image = creategrid(head, grid_width, grid_height, rows_per_image, columns_per_image);
+            outimage = grid_image;
+            write_JPEG_file("./prova1.jpeg", grid_width, grid_height, 100);
             // unsigned char *grid_image = (unsigned char*) calloc( width*height + width*height, 1 );
             // memcpy(grid_image, head->raw_image, width*height);
             // memcpy(&grid_image[width*height], head->next->raw_image, width*height);

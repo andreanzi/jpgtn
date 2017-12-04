@@ -22,7 +22,7 @@ INCLUDES	= -I$(top_builddir) -I$(top_srcdir)
 noinst_HEADERS	= jpgtn.h common.h
 
 bin_PROGRAMS	= jpgtn
-jpgtn_SOURCES	= jpgtn.c readjpeg.c writejpeg.c resizepic.c cutimage.c
+jpgtn_SOURCES	= jpgtn.c readjpeg.c writejpeg.c resizepic.c cutimage.c creategrid.c
 SUBDIRS		= replace
 
 ## Makefile.am
