@@ -77,6 +77,6 @@ extern void write_JPEG_file(char *filename,
 extern unsigned char *cutimage( char* image, int currwidth, int currheight, int which_dim, int size);
 
 /* creategrid.c */
-extern unsigned char *creategrid(node *head, int xsize, int ysize, int xelements, int yelements);
+extern unsigned char *creategrid(node *head, int xsize, int ysize, int rows, int columns, int TW, int TH);
 
 #endif /* !JPGTN_H */
