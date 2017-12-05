@@ -68,15 +68,19 @@ int main(int argc, char **argv)
     char *opt_prefix    = NULL;            /* Output filename prefix      */
     char *imgfile       = NULL;            /* Output filename             */
 
-    int grid_mode = 0;
-    char *source_directory = NULL;
-    int grid_width = 0;
-    int grid_height = 0;
-    int src_directory = 0;
-    int rows_per_image = 0;
-    int columns_per_image = 0;
-
-
+    /* Grid parameters */
+    int grid_width = DEFAULT_GRID_WIDTH;
+    int grid_height = DEFAULT_GRID_HEIGHT;
+    int opt_grid_width;
+    int opt_grid_height;
+    int grid_rows = DEFAULT_GRID_ROWS;
+    int grid_columns = DEFAULT_GRID_COLUMNS;
+    int opt_grid_rows;
+    int opt_grid_columns;
+    int opt_src_directory   = 0;
+    int grid_mode           = 0;
+    char *source_directory  = NULL;
+    char *grid_name         = "grid";
 
     /* Check command args */
     if (argc < 2) {
@@ -84,7 +88,7 @@ int main(int argc, char **argv)
         exit(EXIT_FAILURE);
     }
 
-    while (-1 != (x = getopt(argc,argv,"Vh?SHGWfvs:q:d:p:R:C:J:K:D:"))) {
+    while (-1 != (x = getopt(argc,argv,"Vh?SHGWfvs:q:d:p:N:D:R:C:J:K:"))) {
         switch(x) {
             case 'V':
                 print_version();
@@ -131,26 +135,44 @@ int main(int argc, char **argv)
                 opt_prefix = optarg;
                 opt_flag_prefix = 1;
                 break;
+            case 'N':
+                grid_name = optarg;
+                break;
             case 'D':
                 source_directory = optarg;
-                src_directory = 1;
+                opt_src_directory = 1;
                 break;
             case 'R':
-                sscanf(optarg,"%i",&rows_per_image);
+                sscanf(optarg,"%i",&opt_grid_rows);
+                if (opt_grid_rows < MINSIZE) {
+                    opt_grid_rows = DEFAULT_GRID_ROWS;
+                }
+                grid_rows = opt_grid_rows;
                 break;
             case 'C':
-                sscanf(optarg,"%i",&columns_per_image);
+                sscanf(optarg,"%i",&grid_columns);
+                if (opt_grid_columns < MINSIZE) {
+                  opt_grid_columns = DEFAULT_GRID_COLUMNS;
+                }
+                grid_columns = opt_grid_columns;
                 break;
             case 'J':
-                sscanf(optarg,"%i",&grid_height);
+                sscanf(optarg,"%i",&opt_grid_height);
+                if ((opt_grid_height < MINSIZE) || (opt_grid_height > MAXSIZE)) {
+                    opt_grid_height = DEFAULT_GRID_HEIGHT;
+                }
+                grid_height = opt_grid_height;
                 break;
             case 'K':
-                sscanf(optarg,"%i",&grid_width);
+                sscanf(optarg,"%i",&opt_grid_height);
+                if ((opt_grid_width < MINSIZE) || (opt_grid_width > MAXSIZE)) {
+                    opt_grid_width = DEFAULT_GRID_WIDTH;
+                }
+                grid_width = opt_grid_width;
                 break;
             case 'G':
                 grid_mode = 1;
                 break;
-
             case '?':
                 print_usage(argv[0]);
                 exit(EXIT_FAILURE);
@@ -173,20 +195,40 @@ int main(int argc, char **argv)
         printf("quality: %d\n",opt_quality);
     }
 
+    /* Grid mode */
     if(grid_mode == 1) {
-        //grid mode enabled
-        //TODO: check parameters existence
+        if(opt_src_directory == 1) {
+            if (!opt_flag_stdout) {
+                imgfile = output_file_name(grid_name,
+                                           opt_flag_directory, opt_directory,
+                                           opt_flag_prefix, opt_prefix);
+                if (imgfile != NULL) {
+                    if (!opt_flag_force && file_exists(imgfile)) {
+                        fprintf(stderr,"Skipping %s: File exists\n", imgfile);
+                        exit (EXIT_SUCCESS);
+                    } else {
+                      strcat(imgfile, ".jpeg");
+                    }
+                } else {
+                    fprintf(stderr, "Could not allocate space for filename!\n");
+                    exit(EXIT_FAILURE);
+                }
+            }
 
-        //get images
-        if(src_directory == 1) {
+            //get images
             get_files(source_directory);
-            int TH = grid_height / rows_per_image;
-            int TW = grid_width / columns_per_image;
-            int c = 0;
+            int TH = grid_height / grid_rows;
+            int TW = grid_width / grid_columns;
             for(node* i = head; i != NULL; i = i->next ){
                 printf("%s\n", i->path);
                 //unsigned char *temp = read_JPEG_file(i->path, &palette);
                 i->raw_image = read_JPEG_file(i->path, &palette);
+
+                if (NULL == i->raw_image) {
+                    fprintf(stderr, "read_JPEG_file: Error\n");
+                    exit(EXIT_FAILURE);
+                }
+
                 palrgb=palette;
                 i->width = width;
                 i->height = height;
@@ -212,45 +254,37 @@ int main(int argc, char **argv)
                 }
                 i->width = out_wide;
                 i->height = out_high;
-                printf("\n%d\n", i->width);
-                printf("\n%d\n", i->height);
-                c++;
-                if( c == 4){
-                 break;
-                }
-
-                //i->raw_image = cutimage(i->raw_image, i->width, i->height, RSZ_WIDTH, 50);
-
-                /*
-                write_JPEG_file("./prova1.jpeg", grid_width, grid_height, 100);
-                break;
-                */
-
-                //i->raw_image = resizepic(temp, palette, palette+256, palette+512, i->width, i->height, (i->resize_dim == RSZ_HEIGHT) ? TH : TW, i->resize_dim);
             }
 
-            unsigned char *grid_image = creategrid(head, grid_width, grid_height, rows_per_image, columns_per_image, TW, TH);
-            outimage = grid_image;
-            write_JPEG_file("./prova1.jpeg", grid_width, grid_height, 100);
-            // unsigned char *grid_image = (unsigned char*) calloc( width*height + width*height, 1 );
-            // memcpy(grid_image, head->raw_image, width*height);
-            // memcpy(&grid_image[width*height], head->next->raw_image, width*height);
-            //
-            // outimage = resizepic(grid_image, palette, palette+256, palette+512, grid_width, grid_height, grid_width, RSZ_WIDTH);
-            // //outimage = grid_image;
-            // write_JPEG_file("./prova1.jpeg", grid_width, grid_height, 100);
+            outimage = creategrid(head, grid_width, grid_height, grid_rows, grid_columns, TW, TH);
 
-            //unsigned char *grid_image = (unsigned char*) calloc( 1, height*(width - 100) );
-            //memcpy(grid_image, head->raw_image, height*(width - 100));
-            //memcpy(&grid_image[width*height], head->next->raw_image, width*height);
+            if(outimage == NULL) {
+                fprintf(stderr,"outimage = NULL ???\n");
+                exit(EXIT_FAILURE);
+            }
 
-            //outimage = resizepic(grid_image, palette, palette+256, palette+512, grid_width - 100, grid_height, grid_width, RSZ_WIDTH);
-            //outimage = grid_image;
-            //write_JPEG_file("./prova1.jpeg", grid_width - 100, grid_height, 100);
+            free(palrgb);
 
+            if (! opt_flag_stdout) {
+                if (opt_flag_verbose) {
+                    printf("%s",imgfile);
+                    if (opt_flag_verbose > 1) printf(" %dx%d",xsiz,ysiz);
+                    printf("\n");
+                }
+                write_JPEG_file(imgfile,grid_width,grid_height,opt_quality);
+                free(imgfile);
+                imgfile = NULL;
+                free(outimage);
+
+            } else {
+                write_JPEG_file(NULL,grid_width,grid_height,opt_quality);
+                exit(EXIT_SUCCESS);
+            }
+
+        } else {
+          print_usage(argv[0]);
+          exit(EXIT_FAILURE);
         }
-
-
 
     } else {
         if (argc - optind < 1) {
@@ -259,7 +293,6 @@ int main(int argc, char **argv)
         }
         /* The big loop */
         for (f = optind; f < argc; f++) {
-
             if (!opt_flag_stdout) {
                 imgfile = output_file_name(argv[f],
                                            opt_flag_directory, opt_directory,
@@ -320,9 +353,6 @@ int main(int argc, char **argv)
             }
         }
     }
-
-
-
 
     exit (EXIT_SUCCESS);
 }
@@ -417,7 +447,8 @@ static void print_usage(char *prog)
     printf("  -S            Process only one file and output to stdout.\n");
     printf("  -W            Make the -s switch refer to the output width.\n");
     printf("  -G            Set the grid mode.\n");
-    printf("  -D directory  Set the source directory.\n");
+    printf("  -N            Set the grid name (without extension).\n");
+    printf("  -D directory  Set the source directory. (Mandatory in the grid mode!)\n");
     printf("  -R            Set the number of rows in the grid.\n");
     printf("  -C            Set the number of columns in the grid.\n");
     printf("  -J            Set the height of the grid image.\n");

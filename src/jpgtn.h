@@ -26,9 +26,13 @@
 #ifndef JPGTN_H
 #define JPGTN_H 1
 
-#define MAXSIZE     2048                    /* Maximum size of thumbnail   */
-#define MINSIZE     1                       /* Minimum size of thumbnail   */
-#define DEFAULTSIZE 128                     /* Default size of thumbnail   */
+#define MAXSIZE     2048                    /* Maximum size of thumbnail    */
+#define MINSIZE     1                       /* Minimum size of thumbnail    */
+#define DEFAULTSIZE 128                     /* Default size of thumbnail    */
+#define DEFAULT_GRID_WIDTH 800              /* Default size of grid width   */
+#define DEFAULT_GRID_HEIGHT 600             /* Default size of grid height  */
+#define DEFAULT_GRID_ROWS 1                 /* Default # of rows in grid    */
+#define DEFAULT_GRID_COLUMNS 1              /* Default # of columns in grid */
 
 #define GRAY 128
 
@@ -36,13 +40,13 @@
 #define RSZ_WIDTH  1
 #define RSZ_HEIGHT 2
 
-unsigned char *outimage;                    /* The current thumbnail image */
-unsigned char *palette;                     /* Global palette pointer      */
-int            width;                       /* Original image width        */
-int            height;                      /* Original image height       */
-int            background;                  /* Index's background color    */
-long           out_wide;                    /* Width of thumbnail image    */
-long           out_high;                    /* Height of thumbnail image   */
+unsigned char *outimage;                    /* The current thumbnail image  */
+unsigned char *palette;                     /* Global palette pointer       */
+int            width;                       /* Original image width         */
+int            height;                      /* Original image height        */
+int            background;                  /* Index's background color     */
+long           out_wide;                    /* Width of thumbnail image     */
+long           out_high;                    /* Height of thumbnail image    */
 
 typedef struct node {
     char *path;
