@@ -10,20 +10,27 @@ static unsigned char *getRawImageLine( node *, int, int, int, int);
 
 
 unsigned char *creategrid(node *head, int xsize, int ysize, int rows, int columns, int TW, int TH){
-    unsigned char *grid = (unsigned char*) calloc(1, xsize*ysize*3);
+    unsigned char *grid = calloc(1, xsize * ysize * 3);
+
+    if( grid == NULL){
+        printf("cannot allocate memory\n");
+        return NULL;
+    }
+
+
     //memcpy(grid, head->raw_image, head->width * head->height * 3);
     //memcpy(&grid[head->width * head->height * 3], head->next->raw_image, head->next->width * head->next->height * 3);
     int r = 0;
     for( int h = 0; h < ysize; h++){
         for( int c = 0; c < columns; c++){
             // image in position (r ; c)
-            unsigned char *temp_raw = getRawImageLine(head, r * columns + c, TW, TH, h % TH);
+            unsigned char *temp_raw = getRawImageLine(head, r * columns + c, TW, TH, h);
             memcpy(&grid[ r * xsize * TH * 3 + h* xsize * 3 + c*TW * 3],temp_raw, TW * 3 );
         }
-        if( h == TH - 1){
-            h = 0;
+        if( h == TH - 1 ){
+            h = -1;
             r++;
-            if( r == columns ){
+            if( r == rows ){
                 break;
             }
         }

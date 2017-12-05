@@ -197,38 +197,40 @@ int main(int argc, char **argv)
                     i->scale_factor = scaleH;
                     i->resize_dim = RSZ_HEIGHT;
                     i->cut_dim = RSZ_WIDTH;
-                    int cut_size = (((i->width / i->scale_factor) - TW) / 2) * i->scale_factor;
-                    i->raw_image = cutimage(i->raw_image, i->width, i->height, RSZ_WIDTH, cut_size);
-                    i->width = i->width - cut_size * 2;
                     i->raw_image = resizepic(i->raw_image, palrgb, palrgb+256, palrgb+512, i->width, i->height, TH, RSZ_HEIGHT);
+                    i->width = out_wide;
+                    i->height = out_high;
+                    int difference = i->width - TW;
+                    printf("dimensions after resize: %ix%i\n", out_wide, out_high);
+                    printf("cutting size: %i\n", difference);
+                    if( difference != 0 ){
+                        i->raw_image = cutimage(i->raw_image, i->width, i->height, RSZ_WIDTH, difference/2, difference % 2 );
+                    }
+                    i->width = i->width - difference;
+                    printf("dimensions after cut: %ix%i\n", i->width, i->height);
+
                 } else {
                     i->scale_factor = scaleW;
                     i->resize_dim = RSZ_WIDTH;
                     i->cut_dim = RSZ_HEIGHT;
-                    int cut_size = (((i->height / i->scale_factor) - TH) / 2) * i->scale_factor;
-                    i->raw_image = cutimage(i->raw_image, i->width, i->height, RSZ_HEIGHT, cut_size);
-                    i->height = i->height - cut_size * 2;
                     i->raw_image = resizepic(i->raw_image, palrgb, palrgb+256, palrgb+512, i->width, i->height, TW, RSZ_WIDTH);
+                    i->width = out_wide;
+                    i->height = out_high;
+                    int difference = i->height - TH;
+                    printf("dimensions after resize: %ix%i\n", out_wide, out_high);
+                    printf("cutting size: %i\n", difference);
+                    if( difference != 0 ){
+                        i->raw_image = cutimage(i->raw_image, i->width, i->height, RSZ_HEIGHT, difference/2, difference % 2);
+                    }
+                    i->height = i->height - difference;
+                    printf("dimensions after cut: %ix%i\n", i->width, i->height);
                 }
-                i->width = out_wide;
-                i->height = out_high;
-                printf("\n%d\n", i->width);
-                printf("\n%d\n", i->height);
                 c++;
-                if( c == 4){
+                if( c == rows_per_image * columns_per_image){
                  break;
                 }
 
-                //i->raw_image = cutimage(i->raw_image, i->width, i->height, RSZ_WIDTH, 50);
-
-                /*
-                write_JPEG_file("./prova1.jpeg", grid_width, grid_height, 100);
-                break;
-                */
-
-                //i->raw_image = resizepic(temp, palette, palette+256, palette+512, i->width, i->height, (i->resize_dim == RSZ_HEIGHT) ? TH : TW, i->resize_dim);
             }
-
             unsigned char *grid_image = creategrid(head, grid_width, grid_height, rows_per_image, columns_per_image, TW, TH);
             outimage = grid_image;
             write_JPEG_file("./prova1.jpeg", grid_width, grid_height, 100);

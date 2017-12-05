@@ -18,14 +18,14 @@
     Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
     Jpgtn is based on two programs: tnpic (distributed with zgv) and gtnpic.
-    The original "gtnpic" program was Copyright (C) 1997      Willie Daniel. 
+    The original "gtnpic" program was Copyright (C) 1997      Willie Daniel.
     The original "tnpic"  program was Copyright (C) 1993-1996 Russell Marks.
-    Both tnpic and gtnpic were distributed under the GNU Public License. 
+    Both tnpic and gtnpic were distributed under the GNU Public License.
 */
 
 #if HAVE_CONFIG_H
 #    include <config.h>
-#endif 
+#endif
 
 #include "common.h"
 #include "jpgtn.h"
@@ -99,7 +99,7 @@ unsigned char *read_JPEG_file(char *filename, unsigned char **palette)
         cinfo.quantize_colors = FALSE;
         cinfo.two_pass_quantize = FALSE;
 
-        for(f=0;f<256;f++) { 
+        for(f=0;f<256;f++) {
             pal[f]=pal[256+f]=pal[512+f]=f;
         }
     }
@@ -125,7 +125,7 @@ unsigned char *read_JPEG_file(char *filename, unsigned char **palette)
         }
     }
 
-    ptr = image; 
+    ptr = image;
     row_stride = width;
 
     /* read the image */
