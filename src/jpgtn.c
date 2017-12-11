@@ -87,7 +87,7 @@ int main(int argc, char **argv)
         exit(EXIT_FAILURE);
     }
 
-    while (-1 != (x = getopt(argc,argv,"Vh?SHGWfvs:q:d:p:N:D:R:C:J:K:"))) {
+    while (-1 != (x = getopt(argc,argv,"Vh?SHGWfvs:q:d:p:N:R:C:J:K:"))) {
         switch(x) {
             case 'V':
                 print_version();
@@ -205,7 +205,6 @@ int main(int argc, char **argv)
                                        opt_flag_directory, opt_directory,
                                        opt_flag_prefix, opt_prefix);
             if (imgfile != NULL) {
-              printf("%s\n", imgfile);
                 if (!opt_flag_force && file_exists(imgfile)) {
                     fprintf(stderr,"Skipping %s: File exists\n", imgfile);
                     exit (EXIT_SUCCESS);
@@ -219,10 +218,11 @@ int main(int argc, char **argv)
         //get images
         for (f = optind; f < argc; f++) {
             files_number += get_files(argv[f]);
-            if (files_number < grid_rows * grid_columns) {
-              fprintf(stderr, "# of files < grid dimensions\n");
-              exit(EXIT_FAILURE);
-            }
+        }
+        printf("Numbers of args: %i\n", files_number);
+        if (files_number < grid_rows * grid_columns) {
+          fprintf(stderr, "# of files < grid dimensions\n");
+          exit(EXIT_FAILURE);
         }
 
         int TH = grid_height / grid_rows;
@@ -285,7 +285,6 @@ int main(int argc, char **argv)
             i->width = out_wide;
             i->height = out_high;
         }
-
         outimage = creategrid(head, grid_width, grid_height, grid_rows, grid_columns, TW, TH);
 
         if(outimage == NULL) {
@@ -473,7 +472,6 @@ static void print_usage(char *prog)
     printf("  -W            Make the -s switch refer to the output width.\n");
     printf("  -G            Set the grid mode.\n");
     printf("  -N            Set the grid name (without extension).\n");
-    printf("  -D directory  Set the source directory. (Mandatory in the grid mode!)\n");
     printf("  -R            Set the number of rows in the grid. (Default value: 1)\n");
     printf("  -C            Set the number of columns in the grid. (Default value: 1)\n");
     printf("  -J            Set the height of the grid image. (Default value: 600px)\n");
@@ -492,20 +490,24 @@ static int get_files(char *folder_name) {
     DIR           *d;
     struct dirent *dir;
     int           counter = 0;
+    char *path = (char *) malloc(strlen(folder_name) + 1);
+    strcpy( path, folder_name);
+
     //check if the path provided has a slash
-    if( folder_name[strlen(folder_name) - 1] != '/') {
-        strcat(folder_name, "/");
-    }
-    d = opendir(folder_name);
+    d = opendir(path);
     if (d) {
+        if( path[strlen(path) - 1] != '/') {
+            strcat(path, "/");
+        }
+
         while ((dir = readdir(d)) != NULL)
         {
-            char file_path[strlen(folder_name) +  strlen(dir->d_name) + 2];
+            char file_path[strlen(path) +  strlen(dir->d_name) + 2];
             if( strcmp(dir->d_name, ".") == 0 || strcmp(dir->d_name, "..") == 0 || strcmp(dir->d_name, ".DS_Store") == 0 ) {
                 continue;
             }
             //build the path
-            strcpy( file_path, folder_name);
+            strcpy( file_path, path);
             strcat( file_path, dir->d_name);
             //check if file is a folder
             if( opendir(file_path) ){
@@ -520,12 +522,17 @@ static int get_files(char *folder_name) {
 
         closedir(d);
     } else {
-      // char *imgPath = (char *) malloc(strlen(folder_name));
-      // memcpy( imgPath, folder_name, strlen(folder_name) - 1 );
-      // imgPath[strlen(folder_name) -1] = '\0';
-      // printf("%s\n", imgPath);
-      insert_into_array("grafica-immagine-b.jpg");
-      counter++;
+        FILE * file;
+        file = fopen(path, "r");
+        if( file ){
+            insert_into_array(path);
+            counter++;
+        } else {
+            printf("Skipping %s: cannot open file\n", path);
+        }
+
+        //imgPath[strlen(folder_name) -1] = '\0';
+        //printf("%s\n", imgPath);
     }
 
     return counter;
