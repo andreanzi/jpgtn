@@ -1,5 +1,18 @@
-                              jpgtn version 2
-                              ===============
+                              jpgtn version 2-mod
+                              ===================
+                              
+  Why version2-mod?
+  -----------------
+  
+  Jpgtn-mod is a mod of original jpgtn.
+  
+  The mod consists in an extension that allows users to create a grid of
+  thumbnails according to their needs. In particular, using the grid mode,
+  the user can dispose the thumbnails on a grid, choosing how many rows and
+  columns it should have. Users can also choose the dimensions of the output
+  grid. Every input image will be transformed ( scaled and cut ) to meet
+  users input preferences.
+  
  
   What is jpgtn?
   --------------
