@@ -29,7 +29,14 @@
 #include "common.h"
 #include "jpgtn.h"
 
-/* write_JPEG_file -- Writes the global image "outimage" to a file. */
+/**
+ * @brief This writes the global image outimage to the file specified by params
+ * 
+ * @param filename file name of output
+ * @param outwidth width of output file image
+ * @param outheight height of output file image
+ * @param quality quality of the compression
+ */
 
 void write_JPEG_file(char *filename, int outwidth, int outheight, int quality)
 {

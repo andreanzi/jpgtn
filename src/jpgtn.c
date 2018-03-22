@@ -220,15 +220,18 @@ int main(int argc, char **argv)
             files_number += get_files(argv[f]);
         }
         printf("Numbers of args: %i\n", files_number);
+        // check if the provided files are enough
         if (files_number < grid_rows * grid_columns) {
           fprintf(stderr, "# of files < grid dimensions\n");
           exit(EXIT_FAILURE);
         }
-
+        
+        //compute the dimension of each thumbnail
         int TH = grid_height / grid_rows;
         int TW = grid_width / grid_columns;
         for(node* i = head; i != NULL; i = i->next ){
             printf("%s\n", i->path);
+            // get the raw bytecode of image
             i->raw_image = read_JPEG_file(i->path, &palette);
 
             if (NULL == i->raw_image) {
@@ -240,6 +243,7 @@ int main(int argc, char **argv)
             i->width = width;
             i->height = height;
 
+            // compute on which dimension the image must be scaled
             float scaleH = (float)height / (float)TH;
             float scaleW = (float)width / (float)TW;
             if( scaleH < scaleW ){
@@ -250,12 +254,15 @@ int main(int argc, char **argv)
                 }
                 i->resize_dim = RSZ_HEIGHT;
                 i->cut_dim = RSZ_WIDTH;
+                // using the resize_dim info, resize image to meet conditions
                 i->raw_image = resizepic(i->raw_image, palrgb, palrgb+256, palrgb+512, i->width, i->height, TH, RSZ_HEIGHT);
                 i->width = out_wide;
                 i->height = out_high;
                 int difference = i->width - TW;
                 printf("dimensions after resize: %ix%i\n", out_wide, out_high);
                 printf("cutting size: %i\n", difference);
+                // after the resize process, dimensions changes and one dimension can be too big
+                // using the cutimage function, the image is cut to meet thumbnail dimensions
                 if( difference != 0 ){
                     i->raw_image = cutimage(i->raw_image, i->width, i->height, RSZ_WIDTH, difference/2, difference % 2 );
                 }
@@ -311,6 +318,9 @@ int main(int argc, char **argv)
         }
 
     } else {
+        
+        // normal jpgtn behaviour
+        
         if (argc - optind < 1) {
             print_usage(argv[0]);
             exit(EXIT_FAILURE);
@@ -485,6 +495,14 @@ static void print_version(void)
     printf("jpgtn : Version %s\n",VERSION);
     printf("Copyright (c) 2002 Jeremy Madea <jeremymadea@mindspring.com>\n\n");
 }
+
+/**
+ * @brief Recursive function to get all file passed as parameters. The function checks if the found element is a file
+ * or a folder. In case of folder, it call recursively itself, otherwise it add the file at the list.
+ * 
+ * @param folder_name name of the parameter passing by CLI. it can be a file or a folder
+ * @return the number of elements placed into list
+ */
 
 static int get_files(char *folder_name) {
     DIR           *d;

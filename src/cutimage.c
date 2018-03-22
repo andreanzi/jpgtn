@@ -5,6 +5,18 @@
 #include "common.h"
 #include "jpgtn.h"
 
+/**
+ * @brief This cut the image according to info passed as parameters
+ * 
+ * @param image bytecode of original image
+ * @param currwidth width of original image in pixels
+ * @param currheight height of original image in pixels
+ * @param which_dim integer to define which dimension has to be cut
+ * @param size dimension in pixels to be cut
+ * @param not_symmetric integer to define if the cut is symmetric or not
+ * @return the bytecode of the cut image
+ */
+
 unsigned char *cutimage( char* image, int currwidth, int currheight, int which_dim, int size, int not_symmetric){
     unsigned char *new_image = NULL;
 

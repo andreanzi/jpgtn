@@ -5,9 +5,23 @@
 #include "common.h"
 #include "jpgtn.h"
 
+
+
 /* Private */
 static unsigned char *getRawImageLine( node *, int, int, int, int);
 
+/**
+ * @brief This create the complete grid image
+ * 
+ * @param head head of the list of thumbnails
+ * @param xsize grid width in pixels
+ * @param ysize grid height in pixels
+ * @param rows number of rows of the grid
+ * @param columns number of columns of the grid
+ * @param TW thumbnail width in pixels
+ * @param TH thumbnail height in pixels
+ * @return the raw bytecode of image
+ */
 
 unsigned char *creategrid(node *head, int xsize, int ysize, int rows, int columns, int TW, int TH){
     unsigned char *grid = calloc(1, xsize * ysize * 3);
@@ -18,8 +32,6 @@ unsigned char *creategrid(node *head, int xsize, int ysize, int rows, int column
     }
 
 
-    //memcpy(grid, head->raw_image, head->width * head->height * 3);
-    //memcpy(&grid[head->width * head->height * 3], head->next->raw_image, head->next->width * head->next->height * 3);
     int r = 0;
     for( int h = 0; h < ysize; h++){
         for( int c = 0; c < columns; c++){
@@ -35,16 +47,20 @@ unsigned char *creategrid(node *head, int xsize, int ysize, int rows, int column
             }
         }
     }
-    // memcpy(grid, head->raw_image, xsize*ysize*3);
-
-    // for (int y = 0; y < ysize; y++) {
-    //   // For grid 1 x 2 (non funziona)
-    //   memcpy(&grid[xsize * y], &head->raw_image[y*xsize], head->width);
-    //   memcpy(&grid[(xsize * y + xsize/2)], &head->next->raw_image[y*xsize], head->next->width);
-    // }
 
     return grid;
 }
+
+/**
+ * @brief This returns the bytecode of the row-th row of the n-th image in list
+ * 
+ * @param head head of the list of thumbnails
+ * @param n index of the thumb inside the list
+ * @param TW width of thumbnails in pixels
+ * @param TH height of thumbnails in pixels
+ * @param row row index of which return the bytecode
+ * @return bytecode of the row-th row of n-th image in list
+ */
 
 static unsigned char *getRawImageLine( node *head, int n, int TW, int TH, int row){
     int c = 0;

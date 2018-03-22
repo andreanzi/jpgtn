@@ -1,0 +1,1 @@
+jpgtn -G -J 800 -K 600 -R 2 -c 3 -N test_results.jpg ./minions
